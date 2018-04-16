@@ -1,0 +1,6 @@
+parameters:
+  app.ppact:
+    project-name:
+        url: git@github.com:My-orga/my-project.git
+    project-name2:
+        url: git@github.com:My-orga/my-project2.git
