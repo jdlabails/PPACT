@@ -6,6 +6,7 @@ use App\Entity\Analyze;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
@@ -22,7 +23,7 @@ class LaunchPPACommand extends Command
     {
         $this->params = $ppactParams;
         $this->workspaceDir = $projectDir . '/workspace';
-        $this->workspaceDir = '/home/jd/Projets';
+        $this->workspaceDir = getEnv('PPACT_WORKSPACE');
         $this->entityManager = $entityManager;
 
         parent::__construct();
@@ -104,12 +105,14 @@ class LaunchPPACommand extends Command
                     '<info>' . $project . ' is built, waiting for the results...</info>',
                     '',
                 ]);
-                $output->writeln([
+                $output->writeln(
+                    [
                     '<info>Status for ' . $project . '</info>',
                     $process->getOutput(),
                     ''
-                ],
-                    OutputInterface::VERBOSITY_VERBOSE);
+                    ],
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
                 unset($launchProcesses[$project]);
                 $readProcesses[$project]->start();
             }
@@ -121,12 +124,14 @@ class LaunchPPACommand extends Command
                 }
 
                 $json = $process->getOutput();
-                $output->writeln([
+                $output->writeln(
+                    [
                     '<info>result of analysis for ' . $project . '</info>',
                     $json,
                     ''
-                ],
-                    OutputInterface::VERBOSITY_VERBOSE);
+                    ],
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
 
                 if (trim($json) == 'AIP') {
                     sleep(3);
